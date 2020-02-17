@@ -29,16 +29,16 @@ func WithLogger(logger *zap.SugaredLogger) Option {
 
 func WithSessionKey(s string) Option {
 	return func(c *Client) error {
-		c.sessionKey = s
+		c.session = s
 		return nil
 	}
 }
 
 type Client struct {
-	hc         *http.Client
-	logger     *zap.SugaredLogger
-	url        url.URL
-	sessionKey string
+	hc      *http.Client
+	logger  *zap.SugaredLogger
+	url     url.URL
+	session string
 }
 
 func Open(serviceURL url.URL, opts ...Option) (*Client, error) {
@@ -63,6 +63,12 @@ func (c *Client) WithOpts(opts ...Option) (*Client, error) {
 		}
 	}
 	return &newC, nil
+}
+
+func (c *Client) WithSession(session string) *Client {
+	client := *c
+	client.session = session
+	return &client
 }
 
 func (c *Client) GetMembershipsByIdentity(ctx context.Context, identityID int) ([]Membership, error) {
@@ -150,7 +156,7 @@ func (c *Client) newRequest(method string, path string, params url.Values) (*htt
 	}
 	req.Header.Set("Accept", "application/json")
 
-	if k := c.sessionKey; k != "" {
+	if k := c.session; k != "" {
 		req.Header.Set("Cookie", "checkpoint.session="+k)
 	}
 
