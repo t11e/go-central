@@ -71,6 +71,15 @@ func (c *Client) WithSession(session string) *Client {
 	return &client
 }
 
+func (c *Client) GetOrganizations(ctx context.Context) ([]*Organization, error) {
+	var orgs []*Organization
+	_, err := c.doGET(ctx, "/organizations", nil, &orgs)
+	if err != nil {
+		return nil, err
+	}
+	return orgs, nil
+}
+
 func (c *Client) GetMembershipsByIdentity(ctx context.Context, identityID int) ([]Membership, error) {
 	var memberships []Membership
 	_, err := c.doGET(ctx, fmt.Sprintf("/identities/%d/memberships", identityID), nil, &memberships)
