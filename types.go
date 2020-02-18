@@ -51,3 +51,8 @@ type Membership struct {
 	User           *User         `json:"user"`
 	Organization   *Organization `json:"organization"`
 }
+
+type EffectiveRole struct {
+	Role         Role          `json:"role"`
+	Organization *Organization `json:"organization"`
+}

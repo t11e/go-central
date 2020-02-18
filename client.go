@@ -92,6 +92,18 @@ func (c *Client) GetMembershipsByIdentity(ctx context.Context, identityID int) (
 	return memberships, nil
 }
 
+func (c *Client) GetEffectiveRoles(ctx context.Context, userID int) ([]EffectiveRole, error) {
+	var roles []EffectiveRole
+	_, err := c.doGET(ctx, fmt.Sprintf("/users/%d/effective-roles", userID), nil, &roles)
+	if err != nil {
+		if isStatus(err, http.StatusNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return roles, nil
+}
+
 func (c *Client) GetUserByIdentity(ctx context.Context, identityID int) (*User, error) {
 	var user User
 	_, err := c.doGET(ctx, fmt.Sprintf("/users/by-identity/%d", identityID), nil, &user)
